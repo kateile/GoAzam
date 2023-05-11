@@ -245,15 +245,34 @@ func (api *AzamPay) ListenForWebhookRespReqFormat(w http.ResponseWriter, r *http
 
 // HandleUpdate parses and returns update received via webhook
 func (api *AzamPay) HandleUpdate(r *http.Request) (*Update, error) {
+	var update Update
+
 	if r.Method != http.MethodPost {
 		err := errors.New("wrong HTTP method required POST")
 		return nil, err
 	}
 
-	var update Update
-	err := json.NewDecoder(r.Body).Decode(&update)
-	if err != nil {
-		return nil, err
+	//Todo think of best way here.
+	if api.Debug {
+		// Read the request body as a byte slice.
+		body, err := io.ReadAll(r.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		// Convert the byte slice to a string and print it.
+		fmt.Printf("Request body: %s\n", string(body))
+
+		err = json.Unmarshal(body, &update)
+		if err != nil {
+			return nil, err
+		}
+	} else {
+		//This is more efficient way of reading body.
+		err := json.NewDecoder(r.Body).Decode(&update)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return &update, nil
