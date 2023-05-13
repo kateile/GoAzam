@@ -260,6 +260,7 @@ func (api *AzamPay) HandleUpdate(r *http.Request) (*Update, error) {
 			return nil, err
 		}
 
+		fmt.Printf("Request headers: %+v\n", r.Header)
 		// Convert the byte slice to a string and print it.
 		fmt.Printf("Request body: %s\n", string(body))
 
